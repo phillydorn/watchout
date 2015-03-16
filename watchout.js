@@ -39,7 +39,16 @@ var enemies = d3.select('svg').selectAll('circle')
   // .attr('background-image', 'asteroid.png')
   // .attr('width', function(d) {return d:x})
   // .attr('height',function(d) {return d:y})
+  .attr('class', 'enemies')
   .attr('r', function(d) {return d.radius})
   .attr('cy', function (d) {return d.y})
   .attr('cx',function (d) {return d.x})
   .attr('fill', function(d) {return d.color})
+  
+  var changePosition = function() {
+    d3.selectAll('.enemies')
+    .transition().duration(1000)
+    .attr('cx', function(d) {return d.createPositionX()})
+    .attr('cy', function(d) {return d.createPositionY()});
+  }
+setInterval (changePosition, 1000)
