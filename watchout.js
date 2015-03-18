@@ -8,7 +8,7 @@ var highScoreNode =  d3.select('.high')
       .select('span')
 var currentScoreNode =  d3.select('.current')
       .select('span')
-
+var heading = 0;
 function updateScore () {
   currentScoreNode.text(currentScore++);
 
@@ -23,10 +23,10 @@ var container = d3.select('body').append('svg')
   .attr('height', height)
 
 //create the colored rectangle to hold all the enemies
-var rectangle = container.append('rect')
+var rectangle = container.append('image')
   .attr('width', width)
   .attr('height',height)
-  .attr('fill', 'black')
+  .attr('xlink:href', 'space.jpg')
 //create superclass for hero and enemies to inherit
 var Dot = function(color, x, y) {
   this.radius = 10;
@@ -51,15 +51,18 @@ Enemy.prototype.createPositionY = function() {
   return Math.random()*height;  
 }
 
-//create one hero Dot
-var player = new Dot('blue', width/2, height/2);
 //functionality for hero to be dragged around
 var dragmove = function() {
   var x = d3.event.x;
   var y = d3.event.y;
+  var newHeading = Math.floor(Math.atan(d3.event.dy/d3.event.dx)*180/Math.PI);
+  var angle = newHeading-heading;
+  heading = newHeading;
+  debugger;
   d3.select(this)
   .attr('x', x-25)
   .attr('y', y-25)
+  .attr('transform', 'rotate('+ angle + 'deg)')
 }
 //drag event handler
 var drag = d3.behavior.drag()
@@ -74,7 +77,6 @@ hero.attr('class', 'hero')
     .attr('y',0)
     .attr('height', height)
     .attr('width', width)
-    .attr('xlink', "http://www.w3.org/1999/xlink")
 var rocket = hero.append('image')
     .attr('class','rocket')
     .attr('width', 50)
@@ -84,15 +86,6 @@ var rocket = hero.append('image')
     .attr('xlink:href', 'rocket.png')
     .call(drag)
    
-
-/*var hero = container.append('circle')
-  .data([player])
-  .attr('r', function(d) {return d.radius})
-  .attr('cx', function(d) {return d.x})
-  .attr('cy', function(d) {return d.y})
-  .attr('fill', function(d) {return d.color})
-  .call(drag)*/
-
 //create an array of Enemy objects 
 var numEnemies = 10;
 var enemyArray = [];
@@ -105,9 +98,6 @@ for (var i = 0; i< numEnemies; i++) {
 var enemies = container.selectAll('image')
   .data (enemyArray)
   .enter().append('image')
-  // .attr('background-image', 'asteroid.png')
-  // .attr('width', function(d) {return d:x})
-  // .attr('height',function(d) {return d:y})
   .attr('class', 'enemies')
   .attr('width', 50)
   .attr('height', 50)
@@ -115,19 +105,6 @@ var enemies = container.selectAll('image')
   .attr('y', function (d) {return d.y})
   .attr('xlink:href', 'asteroid.png')
  
-
-
-/*var enemies = container.selectAll('circle')
-  .data (enemyArray)
-  .enter().append('circle')
-  // .attr('background-image', 'asteroid.png')
-  // .attr('width', function(d) {return d:x})
-  // .attr('height',function(d) {return d:y})
-  .attr('class', 'enemies')
-  .attr('r', function (d) {return d.radius})
-  .attr('cx', function (d) {return d.x})
-  .attr('cy', function(d) {return d.y})
-  .attr('fill', function(d) {return d.color})*/
  
  //tween function to track enemies paths during transition
   function makePath (d) {
@@ -147,8 +124,8 @@ var enemies = container.selectAll('image')
     }    
   }
   function doesCollide(enemy) {
-    if (Math.abs(+enemy.attr('x') - +rocket.attr('x') +rocket.attr('width')/2) < 25 && 
-          Math.abs(+enemy.attr('y') - +rocket.attr('y')+ rocket.attr('height')/2) < 25) {
+    if (Math.abs(+enemy.attr('x')+25 - +rocket.attr('x') +rocket.attr('width')/2) < 25 && 
+          Math.abs(+enemy.attr('y')+25 - +rocket.attr('y')+ rocket.attr('height')/2) < 25) {
       return true;
     }
     return false;
