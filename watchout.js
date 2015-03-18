@@ -2,6 +2,18 @@
 var highScore = 0;
 var currentScore = 0;
 var collisions = 0;
+var  collisionNode = d3.select('.collisions')
+      .select('span');
+var highScoreNode =  d3.select('.high')
+      .select('span')
+var currentScoreNode =  d3.select('.current')
+      .select('span')
+
+function updateScore () {
+  currentScoreNode.text(currentScore++);
+
+}
+setInterval(updateScore, 500);
 // set the height and width of the master container
 var width = 1000;
 var height = 600;
@@ -108,10 +120,10 @@ var enemies = container.selectAll('circle')
   }
   
   function collisionUpdate() {
-    d3.select('.collisions')
-      .select('span').text(++collisions)
+    collisionNode.text(++collisions)
     if (currentScore > highScore) {
       highScore = currentScore;
+      highScoreNode.text(highScore);
     }
     currentScore = 0;
   }
